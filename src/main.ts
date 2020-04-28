@@ -6,7 +6,7 @@ async function run(): Promise<void> {
     // get branch coverage
 
     const token = core.getInput('githubToken')
-    console.log('token', token)
+    core.debug(token)
 
     const octokit = new github.GitHub(token)
 
