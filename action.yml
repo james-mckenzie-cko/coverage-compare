@@ -5,6 +5,7 @@ inputs:
   githubToken:
     description: 'your github token'
     default: ''
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
