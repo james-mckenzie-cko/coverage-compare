@@ -3,8 +3,6 @@ import * as github from '@actions/github'
 
 async function run(): Promise<void> {
   try {
-    // core.debug(`Waiting ${ms} milliseconds ...`)
-
     // get branch coverage
 
     const myToken = core.getInput('myToken')
