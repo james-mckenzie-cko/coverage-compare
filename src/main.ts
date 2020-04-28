@@ -12,6 +12,7 @@ async function run(): Promise<void> {
     console.log(process.env.GITHUB_REF)
 
     // get base coverage
+
     // compare coverage
     // comment coverage diff
     // commit new coverage
