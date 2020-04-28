@@ -1,14 +1,22 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import * as github from '@actions/github'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    // core.debug(`Waiting ${ms} milliseconds ...`)
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    // get branch coverage
+
+    const myToken = core.getInput('myToken')
+
+    const octokit = new github.GitHub(myToken)
+
+    console.log(process.env.GITHUB_REF)
+
+    // get base coverage
+    // compare coverage
+    // comment coverage diff
+    // commit new coverage
 
     core.setOutput('time', new Date().toTimeString())
   } catch (error) {
