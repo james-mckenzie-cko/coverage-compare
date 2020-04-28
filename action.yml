@@ -4,7 +4,7 @@ author: 'James McKenzie'
 inputs:
   githubToken:
     description: 'your github token'
-    default: '${{ secrets.GITHUB_TOKEN }}'
+    default: ''
 runs:
   using: 'node12'
   main: 'dist/index.js'
