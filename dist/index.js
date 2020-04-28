@@ -2031,10 +2031,10 @@ const github = __importStar(__webpack_require__(469));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // core.debug(`Waiting ${ms} milliseconds ...`)
             // get branch coverage
-            const myToken = core.getInput('myToken');
-            const octokit = new github.GitHub(myToken);
+            const token = core.getInput('githubToken');
+            core.debug(token);
+            const octokit = new github.GitHub(token);
             console.log(process.env.GITHUB_REF);
             // get base coverage
             // compare coverage
