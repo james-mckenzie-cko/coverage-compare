@@ -5,9 +5,9 @@ async function run(): Promise<void> {
   try {
     // get branch coverage
 
-    const myToken = core.getInput('myToken')
+    const token = core.getInput('githubToken')
 
-    const octokit = new github.GitHub(myToken)
+    const octokit = new github.GitHub(token)
 
     console.log(process.env.GITHUB_REF)
 
