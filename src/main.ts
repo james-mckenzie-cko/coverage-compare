@@ -1,18 +1,24 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
+import {exec} from 'child_process'
+import {getSummary} from './getCoverage'
 
 async function run(): Promise<void> {
   try {
     // get branch coverage
 
-    const token = core.getInput('githubToken')
-    core.debug(token)
+    const currentBranchName = await exec(`git rev-parse --abbrev-ref HEAD`)
 
-    const octokit = new github.GitHub(token)
+    await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
 
-    console.log(process.env.GITHUB_REF)
+    const baseCoverage = require('./coverage-compare/coverage-summary.json')
 
-    // get base coverage
+    await exec(`git checkout -f ${currentBranchName}`)
+
+    const branchCoverage = require('./coverage-compare/coverage-summary.json')
+
+    console.log('base', getSummary(baseCoverage))
+    console.log('base', getSummary(branchCoverage))
 
     // compare coverage
     // comment coverage diff
