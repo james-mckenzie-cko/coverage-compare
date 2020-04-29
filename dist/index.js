@@ -106,8 +106,10 @@ function run() {
             yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
             console.log('branch', yield exec(`git rev-parse --abbrev-ref HEAD`));
             const baseCoverage = getCoverageFile('base');
+            console.log('baseCoverage', baseCoverage);
             yield exec(`git checkout -f ${currentBranchName}`);
             const branchCoverage = getCoverageFile('branch');
+            console.log('branchCoverage', branchCoverage);
             const baseSummary = baseCoverage && getCoverage_1.getSummary(baseCoverage);
             console.log('baseSummary', baseSummary);
             const branchSummary = branchCoverage && getCoverage_1.getSummary(branchCoverage);

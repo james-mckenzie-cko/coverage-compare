@@ -31,10 +31,12 @@ async function run(): Promise<void> {
     console.log('branch', await exec(`git rev-parse --abbrev-ref HEAD`))
 
     const baseCoverage = getCoverageFile('base')
+    console.log('baseCoverage', baseCoverage)
 
     await exec(`git checkout -f ${currentBranchName}`)
 
     const branchCoverage = getCoverageFile('branch')
+    console.log('branchCoverage', branchCoverage)
 
     const baseSummary = baseCoverage && getSummary(baseCoverage)
     console.log('baseSummary', baseSummary)
