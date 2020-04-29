@@ -78,10 +78,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
-const child_process_1 = __webpack_require__(129);
+const util_1 = __webpack_require__(669);
+const child_process_1 = __importDefault(__webpack_require__(129));
 const getCoverage_1 = __webpack_require__(605);
+const exec = util_1.promisify(child_process_1.default.exec);
 const getCoverageFile = () => {
     let coverage;
     try {
@@ -96,10 +101,10 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // get branch coverage
-            const currentBranchName = yield child_process_1.exec(`git rev-parse --abbrev-ref HEAD`);
-            yield child_process_1.exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
+            const { stdout: currentBranchName } = yield exec(`git rev-parse --abbrev-ref HEAD`);
+            yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
             const baseCoverage = getCoverageFile();
-            yield child_process_1.exec(`git checkout -f ${currentBranchName}`);
+            yield exec(`git checkout -f ${currentBranchName}`);
             const branchCoverage = getCoverageFile();
             const baseSummary = baseCoverage && getCoverage_1.getSummary(baseCoverage);
             const branchSummary = branchCoverage && getCoverage_1.getSummary(branchCoverage);
@@ -446,6 +451,13 @@ exports.getSummary = (coverage) => Object.keys(coverage.total).reduce((acc, curr
 /***/ (function(module) {
 
 module.exports = require("path");
+
+/***/ }),
+
+/***/ 669:
+/***/ (function(module) {
+
+module.exports = require("util");
 
 /***/ })
 

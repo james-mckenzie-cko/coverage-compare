@@ -1,7 +1,10 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import {exec} from 'child_process'
+import {promisify} from 'util'
+import childProcess from 'child_process'
 import {getSummary} from './getCoverage'
+
+const exec = promisify(childProcess.exec)
 
 const getCoverageFile = () => {
   let coverage
@@ -17,7 +20,9 @@ async function run(): Promise<void> {
   try {
     // get branch coverage
 
-    const currentBranchName = await exec(`git rev-parse --abbrev-ref HEAD`)
+    const {stdout: currentBranchName} = await exec(
+      `git rev-parse --abbrev-ref HEAD`
+    )
 
     await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
 
