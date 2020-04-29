@@ -87,13 +87,13 @@ const util_1 = __webpack_require__(669);
 const child_process_1 = __importDefault(__webpack_require__(129));
 const getCoverage_1 = __webpack_require__(605);
 const exec = util_1.promisify(child_process_1.default.exec);
-const getCoverageFile = () => {
+const getCoverageFile = (branch) => {
     let coverage;
     try {
         coverage = __webpack_require__(289);
     }
     catch (_a) {
-        console.log(`no coverage found`);
+        console.log(`no coverage found for branch` + branch);
     }
     return coverage;
 };
@@ -105,11 +105,13 @@ function run() {
             console.log('currentBranchName', currentBranchName);
             yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
             console.log('branch', yield exec(`git rev-parse --abbrev-ref HEAD`));
-            const baseCoverage = getCoverageFile();
+            const baseCoverage = getCoverageFile('base');
             yield exec(`git checkout -f ${currentBranchName}`);
-            const branchCoverage = getCoverageFile();
+            const branchCoverage = getCoverageFile('branch');
             const baseSummary = baseCoverage && getCoverage_1.getSummary(baseCoverage);
+            console.log('baseSummary', baseSummary);
             const branchSummary = branchCoverage && getCoverage_1.getSummary(branchCoverage);
+            console.log('branchSummary', branchSummary);
             console.log('base', baseSummary);
             console.log('base', branchSummary);
             // compare coverage

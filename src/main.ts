@@ -5,13 +5,14 @@ import {getSummary} from './getCoverage'
 
 const exec = promisify(childProcess.exec)
 
-const getCoverageFile = () => {
+const getCoverageFile = (branch: string) => {
   let coverage
   try {
     coverage = require('./coverage-compare/coverage-summary.json')
   } catch {
-    console.log(`no coverage found`)
+    console.log(`no coverage found for branch` + branch)
   }
+
   return coverage
 }
 
@@ -29,14 +30,16 @@ async function run(): Promise<void> {
 
     console.log('branch', await exec(`git rev-parse --abbrev-ref HEAD`))
 
-    const baseCoverage = getCoverageFile()
+    const baseCoverage = getCoverageFile('base')
 
     await exec(`git checkout -f ${currentBranchName}`)
 
-    const branchCoverage = getCoverageFile()
+    const branchCoverage = getCoverageFile('branch')
 
     const baseSummary = baseCoverage && getSummary(baseCoverage)
+    console.log('baseSummary', baseSummary)
     const branchSummary = branchCoverage && getSummary(branchCoverage)
+    console.log('branchSummary', branchSummary)
 
     console.log('base', baseSummary)
     console.log('base', branchSummary)
