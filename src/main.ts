@@ -27,8 +27,11 @@ async function run(): Promise<void> {
 
     const branchCoverage = getCoverageFile()
 
-    baseCoverage && console.log('base', getSummary(baseCoverage))
-    branchCoverage && console.log('base', getSummary(branchCoverage))
+    const baseSummary = baseCoverage && getSummary(baseCoverage)
+    const branchSummary = branchCoverage && getSummary(branchCoverage)
+
+    console.log('base', baseSummary)
+    console.log('base', branchSummary)
 
     // compare coverage
     // comment coverage diff
