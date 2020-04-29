@@ -3,6 +3,16 @@ import * as github from '@actions/github'
 import {exec} from 'child_process'
 import {getSummary} from './getCoverage'
 
+const getCoverageFile = () => {
+  let coverage
+  try {
+    coverage = require('./coverage-compare/coverage-summary.json')
+  } catch {
+    console.log(`no coverage found`)
+  }
+  return coverage
+}
+
 async function run(): Promise<void> {
   try {
     // get branch coverage
@@ -11,14 +21,14 @@ async function run(): Promise<void> {
 
     await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
 
-    const baseCoverage = require('./coverage-compare/coverage-summary.json')
+    const baseCoverage = getCoverageFile()
 
     await exec(`git checkout -f ${currentBranchName}`)
 
-    const branchCoverage = require('./coverage-compare/coverage-summary.json')
+    const branchCoverage = getCoverageFile()
 
-    console.log('base', getSummary(baseCoverage))
-    console.log('base', getSummary(branchCoverage))
+    baseCoverage && console.log('base', getSummary(baseCoverage))
+    branchCoverage && console.log('base', getSummary(branchCoverage))
 
     // compare coverage
     // comment coverage diff

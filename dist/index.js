@@ -82,17 +82,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const child_process_1 = __webpack_require__(129);
 const getCoverage_1 = __webpack_require__(605);
+const getCoverageFile = () => {
+    let coverage;
+    try {
+        coverage = __webpack_require__(289);
+    }
+    catch (_a) {
+        console.log(`no coverage found`);
+    }
+    return coverage;
+};
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // get branch coverage
             const currentBranchName = yield child_process_1.exec(`git rev-parse --abbrev-ref HEAD`);
             yield child_process_1.exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
-            const baseCoverage = __webpack_require__(289);
+            const baseCoverage = getCoverageFile();
             yield child_process_1.exec(`git checkout -f ${currentBranchName}`);
-            const branchCoverage = __webpack_require__(289);
-            console.log('base', getCoverage_1.getSummary(baseCoverage));
-            console.log('base', getCoverage_1.getSummary(branchCoverage));
+            const branchCoverage = getCoverageFile();
+            baseCoverage && console.log('base', getCoverage_1.getSummary(baseCoverage));
+            branchCoverage && console.log('base', getCoverage_1.getSummary(branchCoverage));
             // compare coverage
             // comment coverage diff
             // commit new coverage
