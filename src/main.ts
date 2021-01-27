@@ -98,6 +98,8 @@ async function run(): Promise<void> {
 
     // 5. commit new coverage summary
 
+    await exec('git config --global user.name "Coverage"')
+    await exec('git config --global user.email "coverage@bot.com"')
     await exec('git add coverage-compare')
     await exec('git commit -m "Updating code coverage summary"')
     await exec('git push')
