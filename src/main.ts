@@ -64,7 +64,7 @@ async function run(): Promise<void> {
 
     const baseCoverage = getCoverageFile()
 
-    console.log(await (await exec('git rev-parse --abbrev-ref HEADd')).stdout)
+    console.log(await (await exec('git rev-parse --abbrev-ref HEAD')).stdout)
 
     // 3. get current coverage summary
     // 	- checkout compare branch
@@ -75,7 +75,7 @@ async function run(): Promise<void> {
 
     const compareCoverage = getCoverageFile()
 
-    console.log(await (await exec('git rev-parse --abbrev-ref HEADd')).stdout)
+    console.log(await (await exec('git rev-parse --abbrev-ref HEAD')).stdout)
 
     const table = compare(getSummary(baseCoverage), getSummary(compareCoverage))
 

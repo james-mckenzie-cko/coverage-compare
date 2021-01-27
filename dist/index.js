@@ -2159,13 +2159,13 @@ function run() {
             yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
             // 	- get coverage summary
             const baseCoverage = getCoverageFile();
-            console.log(yield (yield exec('git rev-parse --abbrev-ref HEADd')).stdout);
+            console.log(yield (yield exec('git rev-parse --abbrev-ref HEAD')).stdout);
             // 3. get current coverage summary
             // 	- checkout compare branch
             yield exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`);
             // 	- get coverage summary
             const compareCoverage = getCoverageFile();
-            console.log(yield (yield exec('git rev-parse --abbrev-ref HEADd')).stdout);
+            console.log(yield (yield exec('git rev-parse --abbrev-ref HEAD')).stdout);
             const table = compare(getCoverage_1.getSummary(baseCoverage), getCoverage_1.getSummary(compareCoverage));
             // 4. comment on PR with coverage diff
             const github_token = core.getInput('githubToken', { required: true });
