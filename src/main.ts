@@ -37,11 +37,13 @@ const y: any = {
 const compare = (base: any, compare: any) => {
   return table([
     ['', 'old', 'new', 'diff'],
-    ...Object.keys(x).map(key => [
+    ...Object.keys(base).map(key => [
       key,
-      `${x[key]}%`,
-      `${y[key]}`,
-      `${(y[key] - x[key]).toFixed(2)}% ${y[key] - x[key] > 0 ? '📈' : '📉'}`
+      `${base[key]}%`,
+      `${compare[key]}`,
+      `${(compare[key] - base[key]).toFixed(2)}% ${
+        compare[key] - base[key] > 0 ? '📈' : '📉'
+      }`
     ])
   ])
 }
