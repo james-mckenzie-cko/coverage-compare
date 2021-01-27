@@ -42,9 +42,10 @@ async function run(): Promise<void> {
 
     // 	- run tests with coverage
 
-    await exec(
+    const {stdout} = await exec(
       `yarn test --coverage --coverageReporters="json-summary" coverageDirectory="coverage-compare"`
     )
+    console.log('🚀 ~ file: main.ts ~ line 46 ~ run ~ stdout', stdout)
 
     // 	- get coverage summary
 
