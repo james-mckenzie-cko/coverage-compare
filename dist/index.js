@@ -2170,7 +2170,8 @@ function run() {
             yield exec('git config --local user.name "Coverage"');
             yield exec('git config --local user.email "coverage@bot.com"');
             yield exec('git add coverage-compare');
-            yield exec('git commit -m "Updating code coverage summary"');
+            const { stderr } = yield exec('git commit -m "Updating code coverage summary"');
+            console.log('🚀 ~ file: main.ts ~ line 99 ~ run ~ stderr', stderr);
             yield exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`);
             // const baseCoverage = getCoverageFile(baseBranchName)
             // console.log('baseCoverage', baseCoverage)
