@@ -85,11 +85,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const util_1 = __webpack_require__(669);
 const child_process_1 = __importDefault(__webpack_require__(129));
+const fs_1 = __importDefault(__webpack_require__(747));
 const exec = util_1.promisify(child_process_1.default.exec);
 const getCoverageFile = () => {
     let coverage;
     try {
-        coverage = __webpack_require__(289);
+        coverage = JSON.parse(fs_1.default.readFileSync('./coverage-compare/coverage-summary.json', 'utf8'));
         console.log('🚀 ~ file: main.ts ~ line 12 ~ getCoverageFile ~ coverage', coverage);
     }
     catch (_a) {
@@ -142,14 +143,6 @@ function run() {
     });
 }
 run();
-
-
-/***/ }),
-
-/***/ 289:
-/***/ (function() {
-
-eval("require")("./coverage-compare/coverage-summary.json");
 
 
 /***/ }),
@@ -466,6 +459,13 @@ module.exports = require("path");
 /***/ (function(module) {
 
 module.exports = require("util");
+
+/***/ }),
+
+/***/ 747:
+/***/ (function(module) {
+
+module.exports = require("fs");
 
 /***/ })
 

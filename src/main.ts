@@ -2,13 +2,16 @@ import * as core from '@actions/core'
 import {promisify} from 'util'
 import childProcess from 'child_process'
 import {getSummary} from './getCoverage'
+import fs from 'fs'
 
 const exec = promisify(childProcess.exec)
 
 const getCoverageFile = () => {
   let coverage
   try {
-    coverage = require('./coverage-compare/coverage-summary.json')
+    coverage = JSON.parse(
+      fs.readFileSync('./coverage-compare/coverage-summary.json', 'utf8')
+    )
     console.log(
       '🚀 ~ file: main.ts ~ line 12 ~ getCoverageFile ~ coverage',
       coverage
