@@ -3,6 +3,7 @@ import {promisify} from 'util'
 import childProcess from 'child_process'
 import {getSummary} from './getCoverage'
 import fs from 'fs'
+import {table} from 'table'
 
 const exec = promisify(childProcess.exec)
 
@@ -19,8 +20,19 @@ const getCoverageFile = () => {
   return coverage
 }
 
-const getCurrentBranch = async () =>
-  (await exec(`git rev-parse --abbrev-ref HEAD`)).stdout
+const x = {lines: 55.79, statements: 55.94, functions: 49.66, branches: 47.82}
+
+const compare = (base: any, compare: any) => {
+  return table([
+    [undefined, 'old', 'new', 'diff'],
+    ...Object.keys(base).map(key => [
+      key,
+      base[key],
+      compare[key],
+      compare[key] - base[key]
+    ])
+  ])
+}
 
 async function run(): Promise<void> {
   try {
@@ -41,18 +53,11 @@ async function run(): Promise<void> {
 
     await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
 
-    // 	- run tests with coverage
-
-    // const {stdout} = await exec(
-    //   `yarn test --coverage --coverageReporters="json-summary" coverageDirectory="coverage-compare"`
-    // )
-
     // 	- get coverage summary
 
     const compareCoverage = getCoverageFile()
 
-    console.log('🚀 ~ baseCoverage', getSummary(baseCoverage))
-    console.log('🚀 ~ compareCoverage', getSummary(compareCoverage))
+    console.log(compare(getSummary(baseCoverage), getSummary(compareCoverage)))
 
     // 4. comment on PR with coverage diff
     // 5. commit new coverage summary
