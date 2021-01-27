@@ -2176,6 +2176,9 @@ function run() {
             const pull_request_number = pullRequest.number;
             yield octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: table }));
             // 5. commit new coverage summary
+            yield exec('git add coverage-compare');
+            yield exec('git commit -m "Updating code coverage summary"');
+            yield exec('git push');
             // const baseCoverage = getCoverageFile(baseBranchName)
             // console.log('baseCoverage', baseCoverage)
             // await exec(`git checkout -f ${currentBranchName}`)

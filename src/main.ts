@@ -98,6 +98,10 @@ async function run(): Promise<void> {
 
     // 5. commit new coverage summary
 
+    await exec('git add coverage-compare')
+    await exec('git commit -m "Updating code coverage summary"')
+    await exec('git push')
+
     // const baseCoverage = getCoverageFile(baseBranchName)
     // console.log('baseCoverage', baseCoverage)
 
