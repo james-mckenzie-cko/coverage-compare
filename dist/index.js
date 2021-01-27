@@ -112,8 +112,10 @@ function run() {
             // 	- checkout compare branch
             yield exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`);
             // 	- run tests with coverage
-            const { stdout } = yield exec(`yarn test --coverage --coverageReporters="json-summary" coverageDirectory="coverage-compare"`);
-            console.log('🚀 ~ file: main.ts ~ line 46 ~ run ~ stdout', stdout);
+            // const {stdout} = await exec(
+            //   `yarn test --coverage --coverageReporters="json-summary" coverageDirectory="coverage-compare"`
+            // )
+            // console.log('🚀 ~ file: main.ts ~ line 46 ~ run ~ stdout', stdout)
             // 	- get coverage summary
             const compareCoverage = getCoverageFile();
             console.log('🚀 ~ file: main.ts ~ line 52 ~ run ~ compareCoverage', compareCoverage);
