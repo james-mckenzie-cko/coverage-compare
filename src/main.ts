@@ -98,11 +98,14 @@ async function run(): Promise<void> {
 
     // 5. commit new coverage summary
 
-    await exec('git config --global user.name "Coverage"')
-    await exec('git config --global user.email "coverage@bot.com"')
+    const remote = `https://${process.env.GITHUB_ACTOR}:${github_token}@github.com/${process.env.GITHUB_REPOSITORY}.git`
+
+    await exec('git config http.sslVerify false')
+    await exec('git config --local user.name "Coverage"')
+    await exec('git config --local user.email "coverage@bot.com"')
     await exec('git add coverage-compare')
     await exec('git commit -m "Updating code coverage summary"')
-    await exec('git push')
+    await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
 
     // const baseCoverage = getCoverageFile(baseBranchName)
     // console.log('baseCoverage', baseCoverage)

@@ -2176,11 +2176,13 @@ function run() {
             const pull_request_number = pullRequest.number;
             yield octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: table }));
             // 5. commit new coverage summary
-            yield exec('git config --global user.name "Coverage"');
-            yield exec('git config --global user.email "coverage@bot.com"');
+            const remote = `https://${process.env.GITHUB_ACTOR}:${github_token}@github.com/${process.env.GITHUB_REPOSITORY}.git`;
+            yield exec('git config http.sslVerify false');
+            yield exec('git config --local user.name "Coverage"');
+            yield exec('git config --local user.email "coverage@bot.com"');
             yield exec('git add coverage-compare');
             yield exec('git commit -m "Updating code coverage summary"');
-            yield exec('git push');
+            yield exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`);
             // const baseCoverage = getCoverageFile(baseBranchName)
             // console.log('baseCoverage', baseCoverage)
             // await exec(`git checkout -f ${currentBranchName}`)
