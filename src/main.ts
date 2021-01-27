@@ -9,6 +9,10 @@ const getCoverageFile = () => {
   let coverage
   try {
     coverage = require('./coverage-compare/coverage-summary.json')
+    console.log(
+      '🚀 ~ file: main.ts ~ line 12 ~ getCoverageFile ~ coverage',
+      coverage
+    )
   } catch {
     console.log(`no coverage found for branch`)
   }
@@ -29,7 +33,7 @@ async function run(): Promise<void> {
 
     // 	- checkout base branch
 
-    await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
+    // await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
 
     // 	- get coverage summary
 
@@ -38,7 +42,7 @@ async function run(): Promise<void> {
     // 3. get current coverage summary
     // 	- checkout compare branch
 
-    await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
+    // await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
 
     // 	- run tests with coverage
 

@@ -90,6 +90,7 @@ const getCoverageFile = () => {
     let coverage;
     try {
         coverage = __webpack_require__(289);
+        console.log('🚀 ~ file: main.ts ~ line 12 ~ getCoverageFile ~ coverage', coverage);
     }
     catch (_a) {
         console.log(`no coverage found for branch`);
@@ -105,12 +106,12 @@ function run() {
             // 	- get base branch name
             console.log('GITHUB_BASE_REF', process.env.GITHUB_BASE_REF);
             // 	- checkout base branch
-            yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
+            // await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
             // 	- get coverage summary
             const baseCoverage = getCoverageFile();
             // 3. get current coverage summary
             // 	- checkout compare branch
-            yield exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`);
+            // await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
             // 	- run tests with coverage
             // const {stdout} = await exec(
             //   `yarn test --coverage --coverageReporters="json-summary" coverageDirectory="coverage-compare"`
