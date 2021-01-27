@@ -86,13 +86,13 @@ const core = __importStar(__webpack_require__(470));
 const util_1 = __webpack_require__(669);
 const child_process_1 = __importDefault(__webpack_require__(129));
 const exec = util_1.promisify(child_process_1.default.exec);
-const getCoverageFile = (branch) => {
+const getCoverageFile = () => {
     let coverage;
     try {
         coverage = __webpack_require__(289);
     }
     catch (_a) {
-        console.log(`no coverage found for branch ` + branch);
+        console.log(`no coverage found for branch`);
     }
     return coverage;
 };
@@ -100,11 +100,25 @@ const getCurrentBranch = () => __awaiter(void 0, void 0, void 0, function* () { 
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const currentBranchName = yield getCurrentBranch();
-            const baseBranchName = yield getCurrentBranch();
-            console.log('currentBranchName, ', currentBranchName);
-            console.log('baseBranchName', baseBranchName);
+            // 1. on branch to compare
+            // 2. get existing coverage summary
+            // 	- get base branch name
             console.log('GITHUB_BASE_REF', process.env.GITHUB_BASE_REF);
+            // 	- checkout base branch
+            yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
+            // 	- get coverage summary
+            const baseCoverage = getCoverageFile();
+            // 3. get current coverage summary
+            // 	- checkout compare branch
+            yield exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`);
+            // 	- run tests with coverage
+            yield exec(`yarn test --coverage --coverageReporters="json-summary" coverageDirectory="coverage-compare"`);
+            // 	- get coverage summary
+            const compareCoverage = getCoverageFile();
+            console.log('🚀 ~ file: main.ts ~ line 52 ~ run ~ compareCoverage', compareCoverage);
+            console.log('🚀 ~ file: main.ts ~ line 37 ~ run ~ baseCoverage', baseCoverage);
+            // 4. comment on PR with coverage diff
+            // 5. commit new coverage summary
             // const baseCoverage = getCoverageFile(baseBranchName)
             // console.log('baseCoverage', baseCoverage)
             // await exec(`git checkout -f ${currentBranchName}`)

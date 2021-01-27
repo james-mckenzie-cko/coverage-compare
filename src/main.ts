@@ -5,12 +5,12 @@ import {getSummary} from './getCoverage'
 
 const exec = promisify(childProcess.exec)
 
-const getCoverageFile = (branch: string) => {
+const getCoverageFile = () => {
   let coverage
   try {
     coverage = require('./coverage-compare/coverage-summary.json')
   } catch {
-    console.log(`no coverage found for branch ` + branch)
+    console.log(`no coverage found for branch`)
   }
 
   return coverage
@@ -21,13 +21,45 @@ const getCurrentBranch = async () =>
 
 async function run(): Promise<void> {
   try {
-    const currentBranchName = await getCurrentBranch()
+    // 1. on branch to compare
+    // 2. get existing coverage summary
+    // 	- get base branch name
 
-    const baseBranchName = await getCurrentBranch()
-
-    console.log('currentBranchName, ', currentBranchName)
-    console.log('baseBranchName', baseBranchName)
     console.log('GITHUB_BASE_REF', process.env.GITHUB_BASE_REF)
+
+    // 	- checkout base branch
+
+    await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
+
+    // 	- get coverage summary
+
+    const baseCoverage = getCoverageFile()
+
+    // 3. get current coverage summary
+    // 	- checkout compare branch
+
+    await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
+
+    // 	- run tests with coverage
+
+    await exec(
+      `yarn test --coverage --coverageReporters="json-summary" coverageDirectory="coverage-compare"`
+    )
+
+    // 	- get coverage summary
+
+    const compareCoverage = getCoverageFile()
+    console.log(
+      '🚀 ~ file: main.ts ~ line 52 ~ run ~ compareCoverage',
+      compareCoverage
+    )
+    console.log(
+      '🚀 ~ file: main.ts ~ line 37 ~ run ~ baseCoverage',
+      baseCoverage
+    )
+
+    // 4. comment on PR with coverage diff
+    // 5. commit new coverage summary
 
     // const baseCoverage = getCoverageFile(baseBranchName)
     // console.log('baseCoverage', baseCoverage)
