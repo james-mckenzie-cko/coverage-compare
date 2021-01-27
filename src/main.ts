@@ -75,6 +75,8 @@ async function run(): Promise<void> {
 
     const compareCoverage = getCoverageFile()
 
+    console.log(await (await exec('git rev-parse --abbrev-ref HEADd')).stdout)
+
     const table = compare(getSummary(baseCoverage), getSummary(compareCoverage))
 
     // 4. comment on PR with coverage diff
