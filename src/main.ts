@@ -1,9 +1,10 @@
 import * as core from '@actions/core'
+import * as github from '@actions/github'
 import {promisify} from 'util'
 import childProcess from 'child_process'
 import {getSummary} from './getCoverage'
 import fs from 'fs'
-import {table} from 'table'
+import table from 'markdown-table'
 
 const exec = promisify(childProcess.exec)
 
@@ -20,16 +21,27 @@ const getCoverageFile = () => {
   return coverage
 }
 
-const x = {lines: 55.79, statements: 55.94, functions: 49.66, branches: 47.82}
+const x: any = {
+  lines: 55.79,
+  statements: 55.94,
+  functions: 49.66,
+  branches: 47.82
+}
+const y: any = {
+  lines: 56.71,
+  statements: 54.96,
+  functions: 44.64,
+  branches: 48.12
+}
 
 const compare = (base: any, compare: any) => {
   return table([
-    [undefined, 'old', 'new', 'diff'],
-    ...Object.keys(base).map(key => [
+    ['', 'old', 'new', 'diff'],
+    ...Object.keys(x).map(key => [
       key,
-      base[key],
-      compare[key],
-      compare[key] - base[key]
+      `${x[key]}%`,
+      `${y[key]}`,
+      `${(y[key] - x[key]).toFixed(2)}% ${y[key] - x[key] > 0 ? '📈' : '📉'}`
     ])
   ])
 }
@@ -57,9 +69,31 @@ async function run(): Promise<void> {
 
     const compareCoverage = getCoverageFile()
 
-    console.log(compare(getSummary(baseCoverage), getSummary(compareCoverage)))
+    const table = compare(getSummary(baseCoverage), getSummary(compareCoverage))
 
     // 4. comment on PR with coverage diff
+
+    const github_token = core.getInput('githubToken', {required: true})
+
+    const octokit = new github.GitHub(github_token)
+
+    const context = github.context
+
+    const pullRequest = context.payload.pull_request
+
+    if (pullRequest == null) {
+      core.setFailed('No pull request found.')
+      return
+    }
+
+    const pull_request_number = pullRequest.number
+
+    await octokit.issues.createComment({
+      ...context.repo,
+      issue_number: pull_request_number,
+      body: table
+    })
+
     // 5. commit new coverage summary
 
     // const baseCoverage = getCoverageFile(baseBranchName)
