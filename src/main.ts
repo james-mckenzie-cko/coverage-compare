@@ -10,45 +10,40 @@ const getCoverageFile = (branch: string) => {
   try {
     coverage = require('./coverage-compare/coverage-summary.json')
   } catch {
-    console.log(`no coverage found for branch` + branch)
+    console.log(`no coverage found for branch ` + branch)
   }
 
   return coverage
 }
 
+const getCurrentBranch = async () =>
+  (await exec(`git rev-parse --abbrev-ref HEAD`)).stdout
+
 async function run(): Promise<void> {
   try {
-    // get branch coverage
+    const currentBranchName = await getCurrentBranch()
 
-    const {stdout: currentBranchName} = await exec(
-      `git rev-parse --abbrev-ref HEAD`
-    )
+    const baseBranchName = await getCurrentBranch()
 
-    console.log('currentBranchName', currentBranchName)
+    console.log('currentBranchName, ', currentBranchName)
+    console.log('baseBranchName', baseBranchName)
+    console.log('GITHUB_BASE_REF', process.env.GITHUB_BASE_REF)
 
-    await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
+    // const baseCoverage = getCoverageFile(baseBranchName)
+    // console.log('baseCoverage', baseCoverage)
 
-    console.log('branch', await exec(`git rev-parse --abbrev-ref HEAD`))
+    // await exec(`git checkout -f ${currentBranchName}`)
 
-    const baseCoverage = getCoverageFile('base')
-    console.log('baseCoverage', baseCoverage)
+    // const branchCoverage = getCoverageFile(currentBranchName)
+    // console.log('branchCoverage', branchCoverage)
 
-    await exec(`git checkout -f ${currentBranchName}`)
+    // const baseSummary = baseCoverage && getSummary(baseCoverage)
+    // console.log('baseSummary', baseSummary)
+    // const branchSummary = branchCoverage && getSummary(branchCoverage)
+    // console.log('branchSummary', branchSummary)
 
-    const branchCoverage = getCoverageFile('branch')
-    console.log('branchCoverage', branchCoverage)
-
-    const baseSummary = baseCoverage && getSummary(baseCoverage)
-    console.log('baseSummary', baseSummary)
-    const branchSummary = branchCoverage && getSummary(branchCoverage)
-    console.log('branchSummary', branchSummary)
-
-    console.log('base', baseSummary)
-    console.log('base', branchSummary)
-
-    // compare coverage
-    // comment coverage diff
-    // commit new coverage
+    // console.log('base', baseSummary)
+    // console.log('base', branchSummary)
 
     core.setOutput('time', new Date().toTimeString())
   } catch (error) {
