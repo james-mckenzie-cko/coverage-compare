@@ -85,7 +85,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const util_1 = __webpack_require__(669);
 const child_process_1 = __importDefault(__webpack_require__(129));
-const getCoverage_1 = __webpack_require__(605);
 const exec = util_1.promisify(child_process_1.default.exec);
 const getCoverageFile = (branch) => {
     let coverage;
@@ -93,32 +92,30 @@ const getCoverageFile = (branch) => {
         coverage = __webpack_require__(289);
     }
     catch (_a) {
-        console.log(`no coverage found for branch` + branch);
+        console.log(`no coverage found for branch ` + branch);
     }
     return coverage;
 };
+const getCurrentBranch = () => __awaiter(void 0, void 0, void 0, function* () { return (yield exec(`git rev-parse --abbrev-ref HEAD`)).stdout; });
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // get branch coverage
-            const { stdout: currentBranchName } = yield exec(`git rev-parse --abbrev-ref HEAD`);
-            console.log('currentBranchName', currentBranchName);
-            yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
-            console.log('branch', yield exec(`git rev-parse --abbrev-ref HEAD`));
-            const baseCoverage = getCoverageFile('base');
-            console.log('baseCoverage', baseCoverage);
-            yield exec(`git checkout -f ${currentBranchName}`);
-            const branchCoverage = getCoverageFile('branch');
-            console.log('branchCoverage', branchCoverage);
-            const baseSummary = baseCoverage && getCoverage_1.getSummary(baseCoverage);
-            console.log('baseSummary', baseSummary);
-            const branchSummary = branchCoverage && getCoverage_1.getSummary(branchCoverage);
-            console.log('branchSummary', branchSummary);
-            console.log('base', baseSummary);
-            console.log('base', branchSummary);
-            // compare coverage
-            // comment coverage diff
-            // commit new coverage
+            const currentBranchName = yield getCurrentBranch();
+            const baseBranchName = yield getCurrentBranch();
+            console.log('currentBranchName, ', currentBranchName);
+            console.log('baseBranchName', baseBranchName);
+            console.log('GITHUB_BASE_REF', process.env.GITHUB_BASE_REF);
+            // const baseCoverage = getCoverageFile(baseBranchName)
+            // console.log('baseCoverage', baseCoverage)
+            // await exec(`git checkout -f ${currentBranchName}`)
+            // const branchCoverage = getCoverageFile(currentBranchName)
+            // console.log('branchCoverage', branchCoverage)
+            // const baseSummary = baseCoverage && getSummary(baseCoverage)
+            // console.log('baseSummary', baseSummary)
+            // const branchSummary = branchCoverage && getSummary(branchCoverage)
+            // console.log('branchSummary', branchSummary)
+            // console.log('base', baseSummary)
+            // console.log('base', branchSummary)
             core.setOutput('time', new Date().toTimeString());
         }
         catch (error) {
@@ -437,19 +434,6 @@ function getState(name) {
 }
 exports.getState = getState;
 //# sourceMappingURL=core.js.map
-
-/***/ }),
-
-/***/ 605:
-/***/ (function(__unusedmodule, exports) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSummary = (coverage) => Object.keys(coverage.total).reduce((acc, curr, i) => {
-    return Object.assign(Object.assign({}, acc), { [curr]: coverage.total[curr].pct });
-}, {});
-
 
 /***/ }),
 
