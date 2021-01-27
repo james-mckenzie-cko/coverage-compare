@@ -34,16 +34,18 @@ const y: any = {
   branches: 48.12
 }
 
+const getSymbol = (val: number) => (val > 0 ? '📈' : val < 0 ? '📉' : '')
+
 const compare = (base: any, compare: any) => {
   return table([
     ['', 'old', 'new', 'diff'],
     ...Object.keys(base).map(key => [
       key,
       `${base[key]}%`,
-      `${compare[key]}`,
-      `${(compare[key] - base[key]).toFixed(2)}% ${
-        compare[key] - base[key] > 0 ? '📈' : '📉'
-      }`
+      `${compare[key]}%`,
+      `${(compare[key] - base[key]).toFixed(2)}% ${getSymbol(
+        compare[key] - base[key]
+      )}`
     ])
   ])
 }
@@ -61,6 +63,8 @@ async function run(): Promise<void> {
     // 	- get coverage summary
 
     const baseCoverage = getCoverageFile()
+
+    console.log(await (await exec('git rev-parse --abbrev-ref HEADd')).stdout)
 
     // 3. get current coverage summary
     // 	- checkout compare branch
