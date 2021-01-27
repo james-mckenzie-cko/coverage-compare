@@ -94,11 +94,8 @@ async function run(): Promise<void> {
     await exec('git config http.sslVerify false')
     await exec('git config --local user.name "Coverage"')
     await exec('git config --local user.email "coverage@bot.com"')
-    await exec('git add coverage-compare')
-    const {stderr} = await exec(
-      'git commit -m "Updating code coverage summary"'
-    )
-    console.log('🚀 ~ file: main.ts ~ line 99 ~ run ~ stderr', stderr)
+    await exec('git add -A')
+    await exec('git commit -m "Updating code coverage summary"')
     await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
 
     // const baseCoverage = getCoverageFile(baseBranchName)
