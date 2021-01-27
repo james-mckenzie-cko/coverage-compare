@@ -12,10 +12,6 @@ const getCoverageFile = () => {
     coverage = JSON.parse(
       fs.readFileSync('./coverage-compare/coverage-summary.json', 'utf8')
     )
-    console.log(
-      '🚀 ~ file: main.ts ~ line 12 ~ getCoverageFile ~ coverage',
-      coverage
-    )
   } catch {
     console.log(`no coverage found for branch`)
   }
@@ -32,11 +28,9 @@ async function run(): Promise<void> {
     // 2. get existing coverage summary
     // 	- get base branch name
 
-    console.log('GITHUB_BASE_REF', process.env.GITHUB_BASE_REF)
-
     // 	- checkout base branch
 
-    // await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
+    await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
 
     // 	- get coverage summary
 
@@ -45,26 +39,20 @@ async function run(): Promise<void> {
     // 3. get current coverage summary
     // 	- checkout compare branch
 
-    // await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
+    await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
 
     // 	- run tests with coverage
 
     // const {stdout} = await exec(
     //   `yarn test --coverage --coverageReporters="json-summary" coverageDirectory="coverage-compare"`
     // )
-    // console.log('🚀 ~ file: main.ts ~ line 46 ~ run ~ stdout', stdout)
 
     // 	- get coverage summary
 
     const compareCoverage = getCoverageFile()
-    console.log(
-      '🚀 ~ file: main.ts ~ line 52 ~ run ~ compareCoverage',
-      compareCoverage
-    )
-    console.log(
-      '🚀 ~ file: main.ts ~ line 37 ~ run ~ baseCoverage',
-      baseCoverage
-    )
+
+    console.log('🚀 ~ baseCoverage', getSummary(baseCoverage))
+    console.log('🚀 ~ compareCoverage', getSummary(compareCoverage))
 
     // 4. comment on PR with coverage diff
     // 5. commit new coverage summary

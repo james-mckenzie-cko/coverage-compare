@@ -85,13 +85,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const util_1 = __webpack_require__(669);
 const child_process_1 = __importDefault(__webpack_require__(129));
+const getCoverage_1 = __webpack_require__(605);
 const fs_1 = __importDefault(__webpack_require__(747));
 const exec = util_1.promisify(child_process_1.default.exec);
 const getCoverageFile = () => {
     let coverage;
     try {
         coverage = JSON.parse(fs_1.default.readFileSync('./coverage-compare/coverage-summary.json', 'utf8'));
-        console.log('🚀 ~ file: main.ts ~ line 12 ~ getCoverageFile ~ coverage', coverage);
     }
     catch (_a) {
         console.log(`no coverage found for branch`);
@@ -105,23 +105,21 @@ function run() {
             // 1. on branch to compare
             // 2. get existing coverage summary
             // 	- get base branch name
-            console.log('GITHUB_BASE_REF', process.env.GITHUB_BASE_REF);
             // 	- checkout base branch
-            // await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
+            yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
             // 	- get coverage summary
             const baseCoverage = getCoverageFile();
             // 3. get current coverage summary
             // 	- checkout compare branch
-            // await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
+            yield exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`);
             // 	- run tests with coverage
             // const {stdout} = await exec(
             //   `yarn test --coverage --coverageReporters="json-summary" coverageDirectory="coverage-compare"`
             // )
-            // console.log('🚀 ~ file: main.ts ~ line 46 ~ run ~ stdout', stdout)
             // 	- get coverage summary
             const compareCoverage = getCoverageFile();
-            console.log('🚀 ~ file: main.ts ~ line 52 ~ run ~ compareCoverage', compareCoverage);
-            console.log('🚀 ~ file: main.ts ~ line 37 ~ run ~ baseCoverage', baseCoverage);
+            console.log('🚀 ~ baseCoverage', getCoverage_1.getSummary(baseCoverage));
+            console.log('🚀 ~ compareCoverage', getCoverage_1.getSummary(compareCoverage));
             // 4. comment on PR with coverage diff
             // 5. commit new coverage summary
             // const baseCoverage = getCoverageFile(baseBranchName)
@@ -445,6 +443,19 @@ function getState(name) {
 }
 exports.getState = getState;
 //# sourceMappingURL=core.js.map
+
+/***/ }),
+
+/***/ 605:
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getSummary = (coverage) => Object.keys(coverage.total).reduce((acc, curr, i) => {
+    return Object.assign(Object.assign({}, acc), { [curr]: coverage.total[curr].pct });
+}, {});
+
 
 /***/ }),
 
