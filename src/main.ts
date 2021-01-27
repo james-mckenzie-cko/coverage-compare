@@ -9,29 +9,13 @@ import table from 'markdown-table'
 const exec = promisify(childProcess.exec)
 
 const getCoverageFile = () => {
-  let coverage
   try {
-    coverage = JSON.parse(
+    return JSON.parse(
       fs.readFileSync('./coverage-compare/coverage-summary.json', 'utf8')
     )
-  } catch {
-    console.log(`no coverage found for branch`)
+  } catch (e) {
+    return undefined
   }
-
-  return coverage
-}
-
-const x: any = {
-  lines: 55.79,
-  statements: 55.94,
-  functions: 49.66,
-  branches: 47.82
-}
-const y: any = {
-  lines: 56.71,
-  statements: 54.96,
-  functions: 44.64,
-  branches: 48.12
 }
 
 const getSymbol = (val: number) => (val > 0 ? '📈' : val < 0 ? '📉' : '')
@@ -64,8 +48,6 @@ async function run(): Promise<void> {
 
     const baseCoverage = getCoverageFile()
 
-    console.log(await (await exec('git rev-parse --abbrev-ref HEAD')).stdout)
-
     // 3. get current coverage summary
     // 	- checkout compare branch
 
@@ -75,32 +57,35 @@ async function run(): Promise<void> {
 
     const compareCoverage = getCoverageFile()
 
-    console.log(await (await exec('git rev-parse --abbrev-ref HEAD')).stdout)
-
-    const table = compare(getSummary(baseCoverage), getSummary(compareCoverage))
-
-    // 4. comment on PR with coverage diff
-
     const github_token = core.getInput('githubToken', {required: true})
 
-    const octokit = new github.GitHub(github_token)
+    if (baseCoverage) {
+      const table = compare(
+        getSummary(baseCoverage),
+        getSummary(compareCoverage)
+      )
 
-    const context = github.context
+      // 4. comment on PR with coverage diff
 
-    const pullRequest = context.payload.pull_request
+      const octokit = new github.GitHub(github_token)
 
-    if (pullRequest == null) {
-      core.setFailed('No pull request found.')
-      return
+      const context = github.context
+
+      const pullRequest = context.payload.pull_request
+
+      if (pullRequest == null) {
+        core.setFailed('No pull request found.')
+        return
+      }
+
+      const pull_request_number = pullRequest.number
+
+      await octokit.issues.createComment({
+        ...context.repo,
+        issue_number: pull_request_number,
+        body: table
+      })
     }
-
-    const pull_request_number = pullRequest.number
-
-    await octokit.issues.createComment({
-      ...context.repo,
-      issue_number: pull_request_number,
-      body: table
-    })
 
     // 5. commit new coverage summary
 

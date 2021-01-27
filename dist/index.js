@@ -2116,26 +2116,12 @@ const fs_1 = __importDefault(__webpack_require__(747));
 const markdown_table_1 = __importDefault(__webpack_require__(366));
 const exec = util_1.promisify(child_process_1.default.exec);
 const getCoverageFile = () => {
-    let coverage;
     try {
-        coverage = JSON.parse(fs_1.default.readFileSync('./coverage-compare/coverage-summary.json', 'utf8'));
+        return JSON.parse(fs_1.default.readFileSync('./coverage-compare/coverage-summary.json', 'utf8'));
     }
-    catch (_a) {
-        console.log(`no coverage found for branch`);
+    catch (e) {
+        return undefined;
     }
-    return coverage;
-};
-const x = {
-    lines: 55.79,
-    statements: 55.94,
-    functions: 49.66,
-    branches: 47.82
-};
-const y = {
-    lines: 56.71,
-    statements: 54.96,
-    functions: 44.64,
-    branches: 48.12
 };
 const getSymbol = (val) => (val > 0 ? '📈' : val < 0 ? '📉' : '');
 const compare = (base, compare) => {
@@ -2159,25 +2145,25 @@ function run() {
             yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
             // 	- get coverage summary
             const baseCoverage = getCoverageFile();
-            console.log(yield (yield exec('git rev-parse --abbrev-ref HEAD')).stdout);
             // 3. get current coverage summary
             // 	- checkout compare branch
             yield exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`);
             // 	- get coverage summary
             const compareCoverage = getCoverageFile();
-            console.log(yield (yield exec('git rev-parse --abbrev-ref HEAD')).stdout);
-            const table = compare(getCoverage_1.getSummary(baseCoverage), getCoverage_1.getSummary(compareCoverage));
-            // 4. comment on PR with coverage diff
             const github_token = core.getInput('githubToken', { required: true });
-            const octokit = new github.GitHub(github_token);
-            const context = github.context;
-            const pullRequest = context.payload.pull_request;
-            if (pullRequest == null) {
-                core.setFailed('No pull request found.');
-                return;
+            if (baseCoverage) {
+                const table = compare(getCoverage_1.getSummary(baseCoverage), getCoverage_1.getSummary(compareCoverage));
+                // 4. comment on PR with coverage diff
+                const octokit = new github.GitHub(github_token);
+                const context = github.context;
+                const pullRequest = context.payload.pull_request;
+                if (pullRequest == null) {
+                    core.setFailed('No pull request found.');
+                    return;
+                }
+                const pull_request_number = pullRequest.number;
+                yield octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: table }));
             }
-            const pull_request_number = pullRequest.number;
-            yield octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: table }));
             // 5. commit new coverage summary
             const remote = `https://${process.env.GITHUB_ACTOR}:${github_token}@github.com/${process.env.GITHUB_REPOSITORY}.git`;
             yield exec('git config http.sslVerify false');
