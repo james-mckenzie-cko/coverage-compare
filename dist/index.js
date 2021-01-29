@@ -2144,9 +2144,9 @@ function run() {
             //make temp copy
             fs_1.default.copyFileSync('./coverage-compare/coverage-summary.json', './coverage-compare/tmp-coverage-summary.json');
             //get base
-            yield exec(`git checkout ${process.env.GITHUB_BASE_REF} ./coverage-compare/coverage-summary.json`);
-            const baseCoverage = getCoverageFile();
             yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
+            const baseCoverage = getCoverageFile();
+            yield exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`);
             const githubToken = core.getInput('githubToken', { required: true });
             if (baseCoverage) {
                 const table = generateTable(getCoverage_1.getSummary(baseCoverage), getCoverage_1.getSummary(compareCoverage));
