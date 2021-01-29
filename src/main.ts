@@ -90,16 +90,16 @@ async function run(): Promise<void> {
 
     // 5. commit new coverage summary
 
-    // if (compareCoverage) {
-    //   const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
+    if (compareCoverage) {
+      const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
 
-    //   await exec('git config http.sslVerify false')
-    //   await exec('git config --local user.name "Coverage"')
-    //   await exec('git config --local user.email "coverage@bot.com"')
-    //   await exec('git add -A')
-    //   await exec('git commit -m "Updating code coverage summary"')
-    //   await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
-    // }
+      await exec('git config http.sslVerify false')
+      await exec('git config --local user.name "Coverage"')
+      await exec('git config --local user.email "coverage@bot.com"')
+      await exec('git add -A')
+      await exec('git commit -m "Updating code coverage summary"')
+      await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
+    }
 
     core.setOutput('time', new Date().toTimeString())
   } catch (error) {

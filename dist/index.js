@@ -2166,15 +2166,15 @@ function run() {
                 yield octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: table }));
             }
             // 5. commit new coverage summary
-            // if (compareCoverage) {
-            //   const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
-            //   await exec('git config http.sslVerify false')
-            //   await exec('git config --local user.name "Coverage"')
-            //   await exec('git config --local user.email "coverage@bot.com"')
-            //   await exec('git add -A')
-            //   await exec('git commit -m "Updating code coverage summary"')
-            //   await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
-            // }
+            if (compareCoverage) {
+                const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`;
+                yield exec('git config http.sslVerify false');
+                yield exec('git config --local user.name "Coverage"');
+                yield exec('git config --local user.email "coverage@bot.com"');
+                yield exec('git add -A');
+                yield exec('git commit -m "Updating code coverage summary"');
+                yield exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`);
+            }
             core.setOutput('time', new Date().toTimeString());
         }
         catch (error) {
