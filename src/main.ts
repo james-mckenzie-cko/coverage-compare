@@ -45,6 +45,16 @@ async function run(): Promise<void> {
 
     await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
 
+    console.log(
+      '🚀 ~ file: main.ts ~ line 64 ~ run ~ process.env.GITHUB_BASE_REF',
+      process.env.GITHUB_BASE_REF
+    )
+
+    console.log(
+      '🚀 ~ file: main.ts ~ line 69 ~ run ~ process.env.GITHUB_HEAD_REF',
+      process.env.GITHUB_HEAD_REF
+    )
+
     // 	- get coverage summary
 
     const baseCoverage = getCoverageFile()
