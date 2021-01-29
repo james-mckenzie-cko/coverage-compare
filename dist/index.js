@@ -2143,7 +2143,9 @@ function run() {
             // 2. get existing coverage summary
             // 	- get base branch name
             // 	- checkout base branch
-            yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
+            const compareCoverage = getCoverageFile();
+            fs_1.default.copyFileSync('./coverage-compare/coverage-summary.json', './coverage-compare/tmp-coverage-summary.json');
+            yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF} ./coverage-compare/coverage-summary.json`);
             console.log('🚀 ~ file: main.ts ~ line 64 ~ run ~ process.env.GITHUB_BASE_REF', process.env.GITHUB_BASE_REF);
             console.log('🚀 ~ file: main.ts ~ line 69 ~ run ~ process.env.GITHUB_HEAD_REF', process.env.GITHUB_HEAD_REF);
             // 	- get coverage summary
@@ -2152,7 +2154,6 @@ function run() {
             // 	- checkout compare branch
             yield exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`);
             // 	- get coverage summary
-            const compareCoverage = getCoverageFile();
             const githubToken = core.getInput('githubToken', { required: true });
             if (baseCoverage) {
                 const table = generateTable(getCoverage_1.getSummary(baseCoverage), getCoverage_1.getSummary(compareCoverage));
@@ -2169,11 +2170,12 @@ function run() {
             }
             // 5. commit new coverage summary
             if (compareCoverage) {
+                fs_1.default.copyFileSync('./coverage-compare/tmp-coverage-summary.json', './coverage-compare/coverage-summary.json');
                 const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`;
                 yield exec('git config http.sslVerify false');
                 yield exec('git config --local user.name "Coverage"');
                 yield exec('git config --local user.email "coverage@bot.com"');
-                yield exec('git add -A');
+                yield exec('git add ./coverage-compare/coverage-summary.json');
                 yield exec('git commit -m "Updating code coverage summary"');
                 yield exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`);
             }

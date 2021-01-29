@@ -42,8 +42,16 @@ async function run(): Promise<void> {
     // 	- get base branch name
 
     // 	- checkout base branch
+    const compareCoverage = getCoverageFile()
 
-    await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
+    fs.copyFileSync(
+      './coverage-compare/coverage-summary.json',
+      './coverage-compare/tmp-coverage-summary.json'
+    )
+
+    await exec(
+      `git checkout -f ${process.env.GITHUB_BASE_REF} ./coverage-compare/coverage-summary.json`
+    )
 
     console.log(
       '🚀 ~ file: main.ts ~ line 64 ~ run ~ process.env.GITHUB_BASE_REF',
@@ -65,8 +73,6 @@ async function run(): Promise<void> {
     await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
 
     // 	- get coverage summary
-
-    const compareCoverage = getCoverageFile()
 
     const githubToken = core.getInput('githubToken', {required: true})
 
@@ -101,12 +107,17 @@ async function run(): Promise<void> {
     // 5. commit new coverage summary
 
     if (compareCoverage) {
+      fs.copyFileSync(
+        './coverage-compare/tmp-coverage-summary.json',
+        './coverage-compare/coverage-summary.json'
+      )
+
       const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
 
       await exec('git config http.sslVerify false')
       await exec('git config --local user.name "Coverage"')
       await exec('git config --local user.email "coverage@bot.com"')
-      await exec('git add -A')
+      await exec('git add ./coverage-compare/coverage-summary.json')
       await exec('git commit -m "Updating code coverage summary"')
       await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
     }
