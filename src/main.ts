@@ -37,20 +37,18 @@ const generateTable = (base: any, compare: any) => {
 
 async function run(): Promise<void> {
   try {
-    // 1. on branch to compare
-    // 2. get existing coverage summary
-    // 	- get base branch name
-
-    // 	- checkout base branch
+    //get current
     const compareCoverage = getCoverageFile()
 
+    //make temp copy
     fs.copyFileSync(
       './coverage-compare/coverage-summary.json',
       './coverage-compare/tmp-coverage-summary.json'
     )
 
+    //get base
     await exec(
-      `git checkout -f ${process.env.GITHUB_BASE_REF} ./coverage-compare/coverage-summary.json`
+      `git checkout ${process.env.GITHUB_BASE_REF} ./coverage-compare/coverage-summary.json`
     )
 
     console.log(
@@ -63,16 +61,7 @@ async function run(): Promise<void> {
       process.env.GITHUB_HEAD_REF
     )
 
-    // 	- get coverage summary
-
     const baseCoverage = getCoverageFile()
-
-    // 3. get current coverage summary
-    // 	- checkout compare branch
-
-    await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
-
-    // 	- get coverage summary
 
     const githubToken = core.getInput('githubToken', {required: true})
 
@@ -103,8 +92,6 @@ async function run(): Promise<void> {
         body: table
       })
     }
-
-    // 5. commit new coverage summary
 
     if (compareCoverage) {
       fs.copyFileSync(
