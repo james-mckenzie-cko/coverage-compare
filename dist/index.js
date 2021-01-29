@@ -2124,7 +2124,7 @@ const getCoverageFile = () => {
     }
 };
 const getSymbol = (val) => (val > 0 ? '📈' : val < 0 ? '📉' : '');
-const compare = (base, compare) => {
+const generateTable = (base, compare) => {
     return markdown_table_1.default([
         ['', 'old', 'new', 'diff'],
         ...Object.keys(base).map(key => [
@@ -2152,7 +2152,7 @@ function run() {
             const compareCoverage = getCoverageFile();
             const github_token = core.getInput('githubToken', { required: true });
             if (baseCoverage) {
-                const table = compare(getCoverage_1.getSummary(baseCoverage), getCoverage_1.getSummary(compareCoverage));
+                const table = generateTable(getCoverage_1.getSummary(baseCoverage), getCoverage_1.getSummary(compareCoverage));
                 // 4. comment on PR with coverage diff
                 const octokit = new github.GitHub(github_token);
                 const context = github.context;
@@ -2165,15 +2165,15 @@ function run() {
                 yield octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: table }));
             }
             // 5. commit new coverage summary
-            if (compareCoverage) {
-                const remote = `https://${process.env.GITHUB_ACTOR}:${github_token}@github.com/${process.env.GITHUB_REPOSITORY}.git`;
-                yield exec('git config http.sslVerify false');
-                yield exec('git config --local user.name "Coverage"');
-                yield exec('git config --local user.email "coverage@bot.com"');
-                yield exec('git add -A');
-                yield exec('git commit -m "Updating code coverage summary"');
-                yield exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`);
-            }
+            // if (compareCoverage) {
+            //   const remote = `https://${process.env.GITHUB_ACTOR}:${github_token}@github.com/${process.env.GITHUB_REPOSITORY}.git`
+            //   await exec('git config http.sslVerify false')
+            //   await exec('git config --local user.name "Coverage"')
+            //   await exec('git config --local user.email "coverage@bot.com"')
+            //   await exec('git add -A')
+            //   await exec('git commit -m "Updating code coverage summary"')
+            //   await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
+            // }
             core.setOutput('time', new Date().toTimeString());
         }
         catch (error) {
