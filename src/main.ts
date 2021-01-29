@@ -51,17 +51,9 @@ async function run(): Promise<void> {
       `git checkout ${process.env.GITHUB_BASE_REF} ./coverage-compare/coverage-summary.json`
     )
 
-    console.log(
-      '🚀 ~ file: main.ts ~ line 64 ~ run ~ process.env.GITHUB_BASE_REF',
-      process.env.GITHUB_BASE_REF
-    )
-
-    console.log(
-      '🚀 ~ file: main.ts ~ line 69 ~ run ~ process.env.GITHUB_HEAD_REF',
-      process.env.GITHUB_HEAD_REF
-    )
-
     const baseCoverage = getCoverageFile()
+
+    await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
 
     const githubToken = core.getInput('githubToken', {required: true})
 
