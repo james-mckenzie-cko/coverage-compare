@@ -14,6 +14,7 @@ const getCoverageFile = () => {
       fs.readFileSync('./coverage-compare/coverage-summary.json', 'utf8')
     )
   } catch (e) {
+    console.log('no coverage file found on base branch')
     return undefined
   }
 }
@@ -57,7 +58,7 @@ async function run(): Promise<void> {
 
     const compareCoverage = getCoverageFile()
 
-    const github_token = core.getInput('githubToken', {required: true})
+    const githubToken = core.getInput('githubToken', {required: true})
 
     if (baseCoverage) {
       const table = generateTable(
@@ -67,7 +68,7 @@ async function run(): Promise<void> {
 
       // 4. comment on PR with coverage diff
 
-      const octokit = new github.GitHub(github_token)
+      const octokit = new github.GitHub(githubToken)
 
       const context = github.context
 
@@ -90,7 +91,7 @@ async function run(): Promise<void> {
     // 5. commit new coverage summary
 
     // if (compareCoverage) {
-    //   const remote = `https://${process.env.GITHUB_ACTOR}:${github_token}@github.com/${process.env.GITHUB_REPOSITORY}.git`
+    //   const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
 
     //   await exec('git config http.sslVerify false')
     //   await exec('git config --local user.name "Coverage"')
