@@ -54,6 +54,14 @@ async function run(): Promise<void> {
     console.log(fs.readdirSync('./coverage-compare'))
 
     const baseCoverage = getCoverageFile()
+    console.log(
+      '🚀 ~ file: main.ts ~ line 57 ~ run ~ baseCoverage',
+      getSummary(baseCoverage)
+    )
+    console.log(
+      '🚀 ~ file: main.ts ~ line 57 ~ run ~ compareCoverage',
+      getSummary(compareCoverage)
+    )
 
     await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
 
