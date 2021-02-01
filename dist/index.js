@@ -2150,7 +2150,7 @@ function run() {
             //get base
             yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF} `);
             const baseCoverage = getCoverageFile();
-            // core.debug(compareCoverage)
+            core.debug(compareCoverage);
             yield exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`);
             const githubToken = core.getInput('githubToken', { required: true });
             if (baseCoverage) {
@@ -2171,15 +2171,16 @@ function run() {
                 //   './coverage-compare/tmp-coverage-summary.json',
                 //   './coverage-compare/coverage-summary.json'
                 // )
-                const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`;
-                yield exec('git config http.sslVerify false');
-                yield exec('git config --local user.name "Coverage"');
-                yield exec('git config --local user.email "coverage@bot.com"');
-                yield exec('git add ./coverage-compare/coverage-summary.json');
-                yield exec('git commit -m "Updating code coverage summary"');
-                yield exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`);
+                //   const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
+                //   await exec('git config http.sslVerify false')
+                //   await exec('git config --local user.name "Coverage"')
+                //   await exec('git config --local user.email "coverage@bot.com"')
+                //   await exec('git add ./coverage-compare/coverage-summary.json')
+                //   await exec('git commit -m "Updating code coverage summary"')
+                //   await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
+                // }
+                core.setOutput('time', new Date().toTimeString());
             }
-            core.setOutput('time', new Date().toTimeString());
         }
         catch (error) {
             core.setFailed(error.message);

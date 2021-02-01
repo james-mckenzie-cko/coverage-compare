@@ -53,7 +53,7 @@ async function run(): Promise<void> {
 
     const baseCoverage = getCoverageFile()
 
-    // core.debug(compareCoverage)
+    core.debug(compareCoverage)
 
     await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
 
@@ -93,17 +93,18 @@ async function run(): Promise<void> {
       //   './coverage-compare/coverage-summary.json'
       // )
 
-      const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
+      //   const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
 
-      await exec('git config http.sslVerify false')
-      await exec('git config --local user.name "Coverage"')
-      await exec('git config --local user.email "coverage@bot.com"')
-      await exec('git add ./coverage-compare/coverage-summary.json')
-      await exec('git commit -m "Updating code coverage summary"')
-      await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
+      //   await exec('git config http.sslVerify false')
+      //   await exec('git config --local user.name "Coverage"')
+      //   await exec('git config --local user.email "coverage@bot.com"')
+      //   await exec('git add ./coverage-compare/coverage-summary.json')
+      //   await exec('git commit -m "Updating code coverage summary"')
+      //   await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
+      // }
+
+      core.setOutput('time', new Date().toTimeString())
     }
-
-    core.setOutput('time', new Date().toTimeString())
   } catch (error) {
     core.setFailed(error.message)
   }
