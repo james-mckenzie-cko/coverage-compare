@@ -53,7 +53,7 @@ async function run(): Promise<void> {
 
     const baseCoverage = getCoverageFile()
 
-    core.debug(compareCoverage)
+    // core.debug(compareCoverage)
 
     await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
 
