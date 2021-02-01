@@ -92,9 +92,7 @@ async function run(): Promise<void> {
       //   './coverage-compare/tmp-coverage-summary.json',
       //   './coverage-compare/coverage-summary.json'
       // )
-
       //   const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
-
       //   await exec('git config http.sslVerify false')
       //   await exec('git config --local user.name "Coverage"')
       //   await exec('git config --local user.email "coverage@bot.com"')
@@ -102,9 +100,8 @@ async function run(): Promise<void> {
       //   await exec('git commit -m "Updating code coverage summary"')
       //   await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
       // }
-
-      core.setOutput('time', new Date().toTimeString())
     }
+    core.setOutput('time', new Date().toTimeString())
   } catch (error) {
     core.setFailed(error.message)
   }

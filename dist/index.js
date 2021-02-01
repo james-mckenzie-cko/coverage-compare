@@ -2179,8 +2179,8 @@ function run() {
                 //   await exec('git commit -m "Updating code coverage summary"')
                 //   await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
                 // }
-                core.setOutput('time', new Date().toTimeString());
             }
+            core.setOutput('time', new Date().toTimeString());
         }
         catch (error) {
             core.setFailed(error.message);
