@@ -2141,7 +2141,6 @@ function run() {
         try {
             //get current
             const compareCoverage = getCoverageFile();
-            core.debug(compareCoverage);
             //make temp copy
             // fs.copyFileSync(
             //   './coverage-compare/coverage-summary.json',
@@ -2150,7 +2149,6 @@ function run() {
             //get base
             yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF} `);
             const baseCoverage = getCoverageFile();
-            core.debug(compareCoverage);
             yield exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`);
             const githubToken = core.getInput('githubToken', { required: true });
             if (baseCoverage) {

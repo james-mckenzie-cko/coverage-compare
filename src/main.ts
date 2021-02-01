@@ -40,8 +40,6 @@ async function run(): Promise<void> {
     //get current
     const compareCoverage = getCoverageFile()
 
-    core.debug(compareCoverage)
-
     //make temp copy
     // fs.copyFileSync(
     //   './coverage-compare/coverage-summary.json',
@@ -52,8 +50,6 @@ async function run(): Promise<void> {
     await exec(`git checkout -f ${process.env.GITHUB_BASE_REF} `)
 
     const baseCoverage = getCoverageFile()
-
-    core.debug(compareCoverage)
 
     await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
 
