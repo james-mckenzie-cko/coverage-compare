@@ -91,7 +91,7 @@ async function run(): Promise<void> {
         './coverage-compare/coverage-summary.json'
       )
 
-      fs.readdirSync('./coverage-compare')
+      console.log(fs.readdirSync('./coverage-compare'))
       //   const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
       //   await exec('git config http.sslVerify false')
       //   await exec('git config --local user.name "Coverage"')

@@ -2163,7 +2163,7 @@ function run() {
             }
             if (compareCoverage) {
                 fs_1.default.copyFileSync('./coverage-compare/tmp-coverage-summary.json', './coverage-compare/coverage-summary.json');
-                fs_1.default.readdirSync('./coverage-compare');
+                console.log(fs_1.default.readdirSync('./coverage-compare'));
                 //   const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
                 //   await exec('git config http.sslVerify false')
                 //   await exec('git config --local user.name "Coverage"')
