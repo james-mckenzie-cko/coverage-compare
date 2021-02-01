@@ -2141,6 +2141,7 @@ function run() {
         try {
             //get current
             const compareCoverage = getCoverageFile();
+            core.debug(compareCoverage);
             //make temp copy
             // fs.copyFileSync(
             //   './coverage-compare/coverage-summary.json',
@@ -2149,6 +2150,7 @@ function run() {
             //get base
             yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF} `);
             const baseCoverage = getCoverageFile();
+            core.debug(compareCoverage);
             yield exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`);
             const githubToken = core.getInput('githubToken', { required: true });
             if (baseCoverage) {
@@ -2165,7 +2167,10 @@ function run() {
                 yield octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: table }));
             }
             if (compareCoverage) {
-                fs_1.default.copyFileSync('./coverage-compare/tmp-coverage-summary.json', './coverage-compare/coverage-summary.json');
+                // fs.copyFileSync(
+                //   './coverage-compare/tmp-coverage-summary.json',
+                //   './coverage-compare/coverage-summary.json'
+                // )
                 const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`;
                 yield exec('git config http.sslVerify false');
                 yield exec('git config --local user.name "Coverage"');
