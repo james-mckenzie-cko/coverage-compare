@@ -46,14 +46,18 @@ async function run(): Promise<void> {
       './coverage-compare/tmp-coverage-summary.json'
     )
 
+    console.log(fs.readdirSync('./coverage-compare'))
+
     //get base
-    await exec(
-      `git checkout -f ${process.env.GITHUB_BASE_REF} coverage-compare/coverage-summary.json`
-    )
+    await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
+
+    console.log(fs.readdirSync('./coverage-compare'))
 
     const baseCoverage = getCoverageFile()
 
-    // await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
+    await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
+
+    console.log(fs.readdirSync('./coverage-compare'))
 
     const githubToken = core.getInput('githubToken', {required: true})
 
