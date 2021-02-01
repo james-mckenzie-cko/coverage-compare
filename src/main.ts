@@ -21,7 +21,7 @@ const getCoverageFile = () => {
 
 const getSymbol = (val: number) => (val > 0 ? '📈' : val < 0 ? '📉' : '')
 
-const generateTable = (base: any, compare: any) => {
+export const generateTable = (base: any, compare: any) => {
   return table([
     ['', 'old', 'new', 'diff'],
     ...Object.keys(base).map(key => [
@@ -41,13 +41,13 @@ async function run(): Promise<void> {
     const compareCoverage = getCoverageFile()
 
     //make temp copy
-    fs.copyFileSync(
-      './coverage-compare/coverage-summary.json',
-      './coverage-compare/tmp-coverage-summary.json'
-    )
+    // fs.copyFileSync(
+    //   './coverage-compare/coverage-summary.json',
+    //   './coverage-compare/tmp-coverage-summary.json'
+    // )
 
     //get base
-    await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
+    await exec(`git checkout -f ${process.env.GITHUB_BASE_REF} `)
 
     const baseCoverage = getCoverageFile()
 

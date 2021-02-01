@@ -2125,7 +2125,7 @@ const getCoverageFile = () => {
     }
 };
 const getSymbol = (val) => (val > 0 ? '📈' : val < 0 ? '📉' : '');
-const generateTable = (base, compare) => {
+exports.generateTable = (base, compare) => {
     return markdown_table_1.default([
         ['', 'old', 'new', 'diff'],
         ...Object.keys(base).map(key => [
@@ -2142,14 +2142,17 @@ function run() {
             //get current
             const compareCoverage = getCoverageFile();
             //make temp copy
-            fs_1.default.copyFileSync('./coverage-compare/coverage-summary.json', './coverage-compare/tmp-coverage-summary.json');
+            // fs.copyFileSync(
+            //   './coverage-compare/coverage-summary.json',
+            //   './coverage-compare/tmp-coverage-summary.json'
+            // )
             //get base
-            yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`);
+            yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF} `);
             const baseCoverage = getCoverageFile();
             yield exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`);
             const githubToken = core.getInput('githubToken', { required: true });
             if (baseCoverage) {
-                const table = generateTable(getCoverage_1.getSummary(baseCoverage), getCoverage_1.getSummary(compareCoverage));
+                const table = exports.generateTable(getCoverage_1.getSummary(baseCoverage), getCoverage_1.getSummary(compareCoverage));
                 // 4. comment on PR with coverage diff
                 const octokit = new github.GitHub(githubToken);
                 const context = github.context;
