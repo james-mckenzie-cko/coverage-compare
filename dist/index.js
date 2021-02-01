@@ -2142,14 +2142,11 @@ function run() {
             //get current
             const compareCoverage = getCoverageFile();
             //make temp copy
-            // fs.copyFileSync(
-            //   './coverage-compare/coverage-summary.json',
-            //   './coverage-compare/tmp-coverage-summary.json'
-            // )
+            fs_1.default.copyFileSync('./coverage-compare/coverage-summary.json', './coverage-compare/tmp-coverage-summary.json');
             //get base
-            yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF} `);
+            yield exec(`git checkout -f ${process.env.GITHUB_BASE_REF} coverage-compare/coverage-summary.json`);
             const baseCoverage = getCoverageFile();
-            yield exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`);
+            // await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
             const githubToken = core.getInput('githubToken', { required: true });
             if (baseCoverage) {
                 const table = exports.generateTable(getCoverage_1.getSummary(baseCoverage), getCoverage_1.getSummary(compareCoverage));
@@ -2165,10 +2162,8 @@ function run() {
                 yield octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: table }));
             }
             if (compareCoverage) {
-                // fs.copyFileSync(
-                //   './coverage-compare/tmp-coverage-summary.json',
-                //   './coverage-compare/coverage-summary.json'
-                // )
+                fs_1.default.copyFileSync('./coverage-compare/tmp-coverage-summary.json', './coverage-compare/coverage-summary.json');
+                fs_1.default.readdirSync('./coverage-compare');
                 //   const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
                 //   await exec('git config http.sslVerify false')
                 //   await exec('git config --local user.name "Coverage"')

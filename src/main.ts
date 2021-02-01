@@ -41,17 +41,19 @@ async function run(): Promise<void> {
     const compareCoverage = getCoverageFile()
 
     //make temp copy
-    // fs.copyFileSync(
-    //   './coverage-compare/coverage-summary.json',
-    //   './coverage-compare/tmp-coverage-summary.json'
-    // )
+    fs.copyFileSync(
+      './coverage-compare/coverage-summary.json',
+      './coverage-compare/tmp-coverage-summary.json'
+    )
 
     //get base
-    await exec(`git checkout -f ${process.env.GITHUB_BASE_REF} `)
+    await exec(
+      `git checkout -f ${process.env.GITHUB_BASE_REF} coverage-compare/coverage-summary.json`
+    )
 
     const baseCoverage = getCoverageFile()
 
-    await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
+    // await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
 
     const githubToken = core.getInput('githubToken', {required: true})
 
@@ -84,10 +86,12 @@ async function run(): Promise<void> {
     }
 
     if (compareCoverage) {
-      // fs.copyFileSync(
-      //   './coverage-compare/tmp-coverage-summary.json',
-      //   './coverage-compare/coverage-summary.json'
-      // )
+      fs.copyFileSync(
+        './coverage-compare/tmp-coverage-summary.json',
+        './coverage-compare/coverage-summary.json'
+      )
+
+      fs.readdirSync('./coverage-compare')
       //   const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
       //   await exec('git config http.sslVerify false')
       //   await exec('git config --local user.name "Coverage"')
