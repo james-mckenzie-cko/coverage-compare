@@ -109,7 +109,7 @@ async function run(): Promise<void> {
       await exec('git config --local user.name "Coverage"')
       await exec('git config --local user.email "coverage@bot.com"')
       await exec('git add ./coverage-compare/coverage-summary.json')
-      await exec('git commit -m "Updating code coverage summary"')
+      await exec('git commit --allow-empty -m "Updating code coverage summary"')
       await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
     }
     core.setOutput('time', new Date().toTimeString())
