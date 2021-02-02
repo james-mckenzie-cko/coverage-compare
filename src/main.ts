@@ -44,14 +44,34 @@ async function run(): Promise<void> {
     //get current
     const compareCoverage = getCoverageFile()
 
-    //get base (from S3)
-    s3.listObjects({Bucket: 'cko-prism-frontend'}, function(err, data) {
-      if (err) {
-        console.log('Error', err)
-      } else {
-        console.log('Success', data)
+    const readStream = fs.createReadStream(
+      'coverage-compare/coverage-summary.json'
+    )
+
+    s3.upload(
+      {
+        Bucket: 'cko-prism-frontend',
+        Key: 'checks/coverage-summary.json',
+        Body: readStream
+      },
+      (err, data) => {
+        if (err) {
+          console.log('Error', err)
+        } else {
+          console.log('Success', data)
+        }
       }
-    })
+    )
+
+    //get base (from S3)
+
+    // s3.getObject({Bucket: 'cko-prism-frontend', Key: 'checks/coverage-summary.json'}, (err, data) => {
+    //   if (err) {
+    //     console.log('Error', err)
+    //   } else {
+    //     console.log('Success', data)
+    //   }
+    // })
 
     // const baseCoverage = getCoverageFile()
 
