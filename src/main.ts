@@ -6,6 +6,10 @@ import {getSummary} from './getCoverage'
 import fs from 'fs'
 import table from 'markdown-table'
 
+import {S3} from 'aws-sdk'
+
+const s3 = new S3()
+
 const exec = promisify(childProcess.exec)
 
 const getCoverageFile = () => {
@@ -40,78 +44,47 @@ async function run(): Promise<void> {
     //get current
     const compareCoverage = getCoverageFile()
 
-    //make temp copy
-    fs.copyFileSync(
-      './coverage-compare/coverage-summary.json',
-      './coverage-compare/tmp-coverage-summary.json'
-    )
-
-    console.log(fs.readdirSync('./coverage-compare'))
-
-    //get base
-    await exec(`git checkout -f ${process.env.GITHUB_BASE_REF}`)
-
-    console.log(fs.readdirSync('./coverage-compare'))
-
-    const baseCoverage = getCoverageFile()
-    console.log(
-      '🚀 ~ file: main.ts ~ line 57 ~ run ~ baseCoverage',
-      getSummary(baseCoverage)
-    )
-    console.log(
-      '🚀 ~ file: main.ts ~ line 57 ~ run ~ compareCoverage',
-      getSummary(compareCoverage)
-    )
-
-    await exec(`git checkout -f ${process.env.GITHUB_HEAD_REF}`)
-
-    console.log(fs.readdirSync('./coverage-compare'))
-
-    const githubToken = core.getInput('githubToken', {required: true})
-
-    if (baseCoverage) {
-      const table = generateTable(
-        getSummary(baseCoverage),
-        getSummary(compareCoverage)
-      )
-
-      // 4. comment on PR with coverage diff
-
-      const octokit = new github.GitHub(githubToken)
-
-      const context = github.context
-
-      const pullRequest = context.payload.pull_request
-
-      if (pullRequest == null) {
-        core.setFailed('No pull request found.')
-        return
+    //get base (from S3)
+    s3.listObjects({Bucket: 'cko-prism-frontend'}, function(err, data) {
+      if (err) {
+        console.log('Error', err)
+      } else {
+        console.log('Success', data)
       }
+    })
 
-      const pull_request_number = pullRequest.number
+    // const baseCoverage = getCoverageFile()
 
-      await octokit.issues.createComment({
-        ...context.repo,
-        issue_number: pull_request_number,
-        body: table
-      })
-    }
+    console.log(fs.readdirSync('./coverage-compare'))
 
-    if (compareCoverage) {
-      fs.copyFileSync(
-        './coverage-compare/tmp-coverage-summary.json',
-        './coverage-compare/coverage-summary.json'
-      )
+    // const githubToken = core.getInput('githubToken', {required: true})
 
-      console.log(fs.readdirSync('./coverage-compare'))
-      // const remote = `https://${process.env.GITHUB_ACTOR}:${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
-      // await exec('git config http.sslVerify false')
-      // await exec('git config --local user.name "Coverage"')
-      // await exec('git config --local user.email "coverage@bot.com"')
-      // await exec('git add ./coverage-compare/coverage-summary.json')
-      // await exec('git commit --allow-empty -m "Updating code coverage summary"')
-      // await exec(`git push "${remote}" HEAD:"${process.env.GITHUB_HEAD_REF}"`)
-    }
+    // if (baseCoverage) {
+    //   const table = generateTable(
+    //     getSummary(baseCoverage),
+    //     getSummary(compareCoverage)
+    //   )
+
+    //   const octokit = new github.GitHub(githubToken)
+
+    //   const context = github.context
+
+    //   const pullRequest = context.payload.pull_request
+
+    //   if (pullRequest == null) {
+    //     core.setFailed('No pull request found.')
+    //     return
+    //   }
+
+    //   const pull_request_number = pullRequest.number
+
+    //   await octokit.issues.createComment({
+    //     ...context.repo,
+    //     issue_number: pull_request_number,
+    //     body: table
+    //   })
+    // }
+
     core.setOutput('time', new Date().toTimeString())
   } catch (error) {
     core.setFailed(error.message)
