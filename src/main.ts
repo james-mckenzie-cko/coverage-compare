@@ -4,7 +4,6 @@ import fs from 'fs'
 import table from 'markdown-table'
 
 import {S3} from 'aws-sdk'
-import {getSummary} from './getCoverage'
 
 const s3 = new S3()
 
@@ -19,9 +18,17 @@ const getCoverageFile = () => {
   }
 }
 
+const getSummary = (coverage: {total: {[k: string]: any}}) =>
+  Object.keys(coverage.total).reduce((acc, curr, i) => {
+    return {
+      ...acc,
+      [curr]: coverage.total[curr].pct
+    }
+  }, {})
+
 const getSymbol = (val: number) => (val > 0 ? '📈' : val < 0 ? '📉' : '')
 
-export const generateTable = (base: any, compare: any) => {
+const generateTable = (base: any, compare: any) => {
   return table([
     ['', 'old', 'new', 'diff'],
     ...Object.keys(base).map(key => [
@@ -78,10 +85,8 @@ const download = (branch: string) => {
 
 async function run(): Promise<void> {
   try {
-    //get current
     const compareCoverage = getCoverageFile()
 
-    //get base (from S3)
     const baseCoverage = await download(
       process.env.GITHUB_BASE_REF!
     ).catch(err => console.log(err))
