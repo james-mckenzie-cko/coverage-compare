@@ -1,32 +1,32 @@
-import * as core from '@actions/core'
-import * as github from '@actions/github'
-import fs from 'fs'
-import table from 'markdown-table'
+import * as core from '@actions/core';
+import * as github from '@actions/github';
+import fs from 'fs';
+import table from 'markdown-table';
 
-import {S3} from 'aws-sdk'
+import { S3 } from 'aws-sdk';
 
-const s3 = new S3()
+const s3 = new S3();
 
 const getCoverageFile = () => {
   try {
     return JSON.parse(
       fs.readFileSync('./coverage-compare/coverage-summary.json', 'utf8')
-    )
+    );
   } catch (e) {
-    console.log('no coverage file found on base branch')
-    return undefined
+    console.log('no coverage file found on base branch');
+    return undefined;
   }
-}
+};
 
-const getSummary = (coverage: {total: {[k: string]: any}}) =>
+const getSummary = (coverage: { total: { [k: string]: any } }) =>
   Object.keys(coverage.total).reduce((acc, curr, i) => {
     return {
       ...acc,
       [curr]: coverage.total[curr].pct
-    }
-  }, {})
+    };
+  }, {});
 
-const getSymbol = (val: number) => (val > 0 ? '📈' : val < 0 ? '📉' : '')
+const getSymbol = (val: number) => (val > 0 ? '📈' : val < 0 ? '📉' : '');
 
 const generateTable = (base: any, compare: any) => {
   return table([
@@ -39,11 +39,11 @@ const generateTable = (base: any, compare: any) => {
         compare[key] - base[key]
       )}`
     ])
-  ])
-}
+  ]);
+};
 
 const uploadFile = (branch: string, filePath: string) => {
-  const readStream = fs.createReadStream(filePath)
+  const readStream = fs.createReadStream(filePath);
 
   return new Promise<S3.ManagedUpload.SendData>((resolve, reject) => {
     s3.upload(
@@ -54,14 +54,14 @@ const uploadFile = (branch: string, filePath: string) => {
       },
       (err, data) => {
         if (err) {
-          reject(err)
+          reject(err);
         } else {
-          resolve(data)
+          resolve(data);
         }
       }
-    )
-  })
-}
+    );
+  });
+};
 
 const download = (branch: string) => {
   return new Promise<any>((resolve, reject) => {
@@ -72,64 +72,64 @@ const download = (branch: string) => {
       },
       (err, data) => {
         if (err) {
-          reject(err)
+          reject(err);
         } else {
           if (data.Body) {
-            resolve(JSON.parse(data.Body.toString()))
+            resolve(JSON.parse(data.Body.toString()));
           }
         }
       }
-    )
-  })
-}
+    );
+  });
+};
 
 async function run(): Promise<void> {
   try {
-    const compareCoverage = getCoverageFile()
+    const compareCoverage = getCoverageFile();
 
     const baseCoverage = await download(
       process.env.GITHUB_BASE_REF!
-    ).catch(err => console.log(err))
+    ).catch(err => console.log(err));
 
     if (baseCoverage) {
       const table = generateTable(
         getSummary(baseCoverage),
         getSummary(compareCoverage)
-      )
+      );
 
-      const githubToken = core.getInput('githubToken', {required: true})
+      const githubToken = core.getInput('githubToken', { required: true });
 
-      const octokit = new github.GitHub(githubToken)
+      const octokit = new github.GitHub(githubToken);
 
-      const context = github.context
+      const context = github.context;
 
-      const pullRequest = context.payload.pull_request
+      const pullRequest = context.payload.pull_request;
 
       if (pullRequest == null) {
-        core.setFailed('No pull request found.')
-        return
+        core.setFailed('No pull request found.');
+        return;
       }
 
-      const pull_request_number = pullRequest.number
+      const pull_request_number = pullRequest.number;
 
       await octokit.issues.createComment({
         ...context.repo,
         issue_number: pull_request_number,
         body: table
-      })
+      });
     } else {
-      console.log('no base coverage found')
+      console.log('no base coverage found');
     }
 
     await uploadFile(
       process.env.GITHUB_HEAD_REF!,
       'coverage-compare/coverage-summary.json'
-    )
+    );
 
-    core.setOutput('time', new Date().toTimeString())
+    core.setOutput('time', new Date().toTimeString());
   } catch (error) {
-    core.setFailed(error.message)
+    core.setFailed(error.message);
   }
 }
 
-run()
+run();

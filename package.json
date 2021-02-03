@@ -1,8 +1,8 @@
 {
-  "name": "typescript-action",
+  "name": "coverage-compare",
   "version": "0.0.0",
   "private": true,
-  "description": "TypeScript template action",
+  "description": "An action for comparing Istanbul coverage summary",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -11,7 +11,7 @@
     "lint": "eslint src/**/*.ts",
     "pack": "ncc build",
     "test": "jest",
-    "all": "npm run build && npm run format && npm run lint && npm run pack && npm test"
+    "all": "yarn build && yarn format && yarn lint && yarn run pack"
   },
   "repository": {
     "type": "git",
@@ -41,6 +41,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-github": "^2.0.0",
     "eslint-plugin-jest": "^22.21.0",
+    "eslint-plugin-prettier": "^3.3.1",
     "jest": "^24.9.0",
     "jest-circus": "^24.9.0",
     "js-yaml": "^3.13.1",
