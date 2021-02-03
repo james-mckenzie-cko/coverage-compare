@@ -87,16 +87,17 @@ async function run(): Promise<void> {
     )
 
     //get base (from S3)
-
-    const baseCoverage = await download(process.env.GITHUB_BASE_REF!)
-
-    const githubToken = core.getInput('githubToken', {required: true})
+    const baseCoverage = await download(
+      process.env.GITHUB_BASE_REF!
+    ).catch(err => console.log(err))
 
     if (baseCoverage) {
       const table = generateTable(
         getSummary(baseCoverage),
         getSummary(compareCoverage)
       )
+
+      const githubToken = core.getInput('githubToken', {required: true})
 
       const octokit = new github.GitHub(githubToken)
 
