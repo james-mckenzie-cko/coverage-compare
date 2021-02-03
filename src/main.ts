@@ -82,7 +82,7 @@ async function run(): Promise<void> {
     const compareCoverage = getCoverageFile()
 
     await uploadFile(
-      process.env.GITHUB_HEAD_REF!,
+      process.env.GITHUB_BASE_REF!,
       'coverage-compare/coverage-summary.json'
     )
 
