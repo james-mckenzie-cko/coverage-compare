@@ -81,11 +81,6 @@ async function run(): Promise<void> {
     //get current
     const compareCoverage = getCoverageFile()
 
-    await uploadFile(
-      process.env.GITHUB_BASE_REF!,
-      'coverage-compare/coverage-summary.json'
-    )
-
     //get base (from S3)
     const baseCoverage = await download(
       process.env.GITHUB_BASE_REF!
@@ -120,6 +115,11 @@ async function run(): Promise<void> {
     } else {
       console.log('no base coverage found')
     }
+
+    await uploadFile(
+      process.env.GITHUB_HEAD_REF!,
+      'coverage-compare/coverage-summary.json'
+    )
 
     core.setOutput('time', new Date().toTimeString())
   } catch (error) {
