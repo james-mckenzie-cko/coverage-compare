@@ -85,6 +85,19 @@ const download = (branch: string) => {
 
 async function run(): Promise<void> {
   try {
+    const githubToken = core.getInput('githubToken', { required: true });
+
+    const octokit = new github.GitHub(githubToken);
+
+    const context = github.context;
+
+    const pullRequest = context.payload.pull_request;
+
+    if (pullRequest == null) {
+      console.log('No pull request found. Skipping coverage comparison');
+      return;
+    }
+
     const compareCoverage = getCoverageFile();
 
     const baseCoverage = await download(
@@ -96,19 +109,6 @@ async function run(): Promise<void> {
         getSummary(baseCoverage),
         getSummary(compareCoverage)
       );
-
-      const githubToken = core.getInput('githubToken', { required: true });
-
-      const octokit = new github.GitHub(githubToken);
-
-      const context = github.context;
-
-      const pullRequest = context.payload.pull_request;
-
-      if (pullRequest == null) {
-        core.setFailed('No pull request found.');
-        return;
-      }
 
       const pull_request_number = pullRequest.number;
 
