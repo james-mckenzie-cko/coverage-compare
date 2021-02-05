@@ -95,6 +95,12 @@ async function run(): Promise<void> {
 
     if (pullRequest == null) {
       console.log('No pull request found. Skipping coverage comparison');
+
+      if (context.ref === 'refs/heads/master') {
+        console.log('updating code coverage for master');
+
+        await uploadFile('master', 'coverage-compare/coverage-summary.json');
+      }
       return;
     }
 
