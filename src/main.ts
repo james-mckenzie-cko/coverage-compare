@@ -96,6 +96,10 @@ async function run(): Promise<void> {
     if (pullRequest == null) {
       console.log('No pull request found. Skipping coverage comparison');
 
+      console.log(
+        '🚀 ~ file: main.ts ~ line 100 ~ run ~ context.ref ',
+        context.ref
+      );
       if (context.ref === 'refs/heads/master') {
         console.log('updating code coverage for master');
 
